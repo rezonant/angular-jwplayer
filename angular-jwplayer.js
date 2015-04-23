@@ -1,21 +1,33 @@
 'use strict';
-angular.module('angular-jwplayer', []).directive('jwplayer', ['$compile', function ($compile) {
-    return {
-        restrict: 'EC',
-        scope: {
-            playerId: '@',
-            setupVars: '=setup'
+angular.module('angular-jwplayer', []).directive('jwplayer', [ '$timeout', function ($timeout) {
 
-        },
-        link: function (scope, element, attrs) {
-            var id = scope.playerId || 'random_player_' + Math.floor((Math.random() * 999999999) + 1),
-                getTemplate = function (playerId) {
-                return '<div id="' + playerId + '"></div>';
-            };
+	var defaultProps = {
+		id : 'angular-jwplayer-' + Math.floor((Math.random()*999999999)+1)
+	};
 
-            element.html(getTemplate(id));
-            $compile(element.contents())(scope);
-            jwplayer(id).setup(scope.setupVars);
-        }
-    };
+	return {
+		restrict: 'EC',
+		scope: {
+			id: '@id',
+			setupVars: '=setup'
+
+		},
+
+		template: '<div class="root"></div>',
+
+		link: function(scope, element, attrs) {
+			var el = element.find('.root');
+			el.attr('id', el.id = defaultProps.id);
+
+			var unbind = scope.$watch('setupVars', function() {
+				if (!scope.setupVars)
+					return; // wait until we're ready
+
+				unbind();
+				$(document).ready(function() {
+					jwplayer(el.id).setup(scope.setupVars ? scope.setupVars : {});
+				});
+			});
+		}
+	};
 }]);
