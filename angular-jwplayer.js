@@ -25,7 +25,14 @@ angular.module('angular-jwplayer', []).directive('jwplayer', [ '$timeout', funct
 
 				unbind();
 				$(document).ready(function() {
-					jwplayer(el.id).setup(scope.setupVars ? scope.setupVars : {});
+					var player = jwplayer(el.id);
+					var setupVars = scope.setupVars ? scope.setupVars : {};
+					
+					player.setup(setupVars);
+					
+					if (setupVars.onStart)
+						setupVars.onStart(player);
+					
 				});
 			});
 		}
