@@ -28,7 +28,11 @@ angular.module('angular-jwplayer', []).directive('jwplayer', [ '$timeout', funct
 					var player = jwplayer(el.id);
 					var setupVars = scope.setupVars ? scope.setupVars : {};
 					
-					player.setup(setupVars);
+					// Setup returns the final jwplayer instance.
+					// The old instance will not work properly as it is not
+					// fully initialized.
+					
+					player = player.setup(setupVars);
 					
 					if (setupVars.onStart)
 						setupVars.onStart(player);
